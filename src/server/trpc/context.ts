@@ -1,3 +1,4 @@
+import { EventEmitter } from 'events';
 // src/server/router/context.ts
 import type { inferAsyncReturnType } from "@trpc/server";
 import type { CreateNextContextOptions } from "@trpc/server/adapters/next";
@@ -9,6 +10,8 @@ type CreateContextOptions = {
   session: Session | null;
 };
 
+const eventEmitter = new EventEmitter()
+
 /** Use this helper for:
  * - testing, so we dont have to mock Next.js' req/res
  * - trpc's `createSSGHelpers` where we don't have req/res
@@ -17,6 +20,7 @@ export const createContextInner = async (opts: CreateContextOptions) => {
   return {
     session: opts.session,
     prisma,
+    eventEmitter,
   };
 };
 
