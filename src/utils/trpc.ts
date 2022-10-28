@@ -4,6 +4,7 @@ import superjson from "superjson";
 import { httpBatchLink, loggerLink } from "@trpc/client";
 import { createTRPCNext } from "@trpc/next";
 import type { GetInferenceHelpers } from "@trpc/server";
+import { wsLink, createWSClient } from "@trpc/client";
 
 import type { AppRouter } from "../server/trpc/router/_app";
 
@@ -13,8 +14,30 @@ const getBaseUrl = () => {
   return `http://localhost:${process.env.PORT ?? 3000}`; // dev SSR should use localhost
 };
 
+const url = `${getBaseUrl()}/api/trpc`
+
+/**
+ * An ending link is something which can make a request from the client to the application
+ * -> As the name suggests logger links should go at the end of the link[]
+ */
+const getEndingLink = () => {
+  if (typeof window === 'undefined') {
+    return httpBatchLink({
+      url,
+    })
+  }
+
+  const client = createWSClient({
+    url: process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3001'
+  })
+
+  return wsLink({
+    client,
+  })
+}
+
 export const trpc = createTRPCNext<AppRouter>({
-  config() {
+  config({ ctx }) {
     return {
       transformer: superjson,
       links: [
@@ -23,10 +46,17 @@ export const trpc = createTRPCNext<AppRouter>({
             process.env.NODE_ENV === "development" ||
             (opts.direction === "down" && opts.result instanceof Error),
         }),
-        httpBatchLink({
-          url: `${getBaseUrl()}/api/trpc`,
-        }),
+        getEndingLink()
       ],
+      headers() {
+        if (ctx?.req) {
+          return {
+            ...ctx.req.headers
+          }
+        } else {
+          return {}
+        }
+      }
     };
   },
   ssr: false,

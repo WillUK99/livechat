@@ -19,12 +19,13 @@ export const authOptions: NextAuthOptions = {
   // Configure one or more authentication providers
   adapter: PrismaAdapter(prisma),
   providers: [
-    DiscordProvider({
-      clientId: env.DISCORD_CLIENT_ID,
-      clientSecret: env.DISCORD_CLIENT_SECRET,
-    }),
     // ...add more providers here
   ],
+  secret: process.env.NEXTAUTH_SECRET,
+  // Adding this so I don't have to debug any db session stuffsss
+  session: {
+    strategy: 'jwt'
+  }
 };
 
 export default NextAuth(authOptions);
