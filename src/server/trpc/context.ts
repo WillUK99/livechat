@@ -1,14 +1,13 @@
-import { EventEmitter } from 'events';
 // src/server/router/context.ts
+import ws from 'ws'
 import type { inferAsyncReturnType } from "@trpc/server";
 import type { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import type { Session } from "next-auth";
+import { EventEmitter } from 'events';
 import { getServerAuthSession } from "../common/get-server-auth-session";
 import { prisma } from "../db/client";
-
-type CreateContextOptions = {
-  session: Session | null;
-};
+import { NodeHTTPCreateContextFnOptions, NodeHTTPHandlerOptions } from '@trpc/server/dist/adapters/node-http';
+import { IncomingMessage } from 'http';
 
 const eventEmitter = new EventEmitter()
 
@@ -16,7 +15,7 @@ const eventEmitter = new EventEmitter()
  * - testing, so we dont have to mock Next.js' req/res
  * - trpc's `createSSGHelpers` where we don't have req/res
  **/
-export const createContextInner = async (opts: CreateContextOptions) => {
+export const createContextInner = async (opts: NodeHTTPCreateContextFnOptions<IncomingMessage, ws> & { session: Session | null }) => {
   return {
     session: opts.session,
     prisma,
