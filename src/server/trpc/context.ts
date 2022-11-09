@@ -21,6 +21,7 @@ const eventEmitter = new EventEmitter()
  **/
 export const createContextInner = async (opts: CreateContextOptions) => {
   return {
+    ...opts,
     session: opts.session,
     prisma,
     eventEmitter,
@@ -35,7 +36,6 @@ export const createContext = async (opts?: | CreateNextContextOptions | NodeHTTP
   const req = opts?.req
   const res = opts?.res
 
-  // Get the session from the server using the unstable_getServerSession wrapper function
   const session = await getSession({ req });
 
   return await createContextInner({

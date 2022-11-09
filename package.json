@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "dev:ws": "ts-node-dev --project tsconfig.server.json --respawn --transpile-only src/server/wsServer.ts",
     "build": "next build",
     "dev": "next dev",
     "postinstall": "prisma generate",
@@ -21,6 +22,7 @@
     "next": "12.3.1",
     "next-auth": "^4.15.0",
     "node-fetch": "2.6.1",
+    "nodemon": "^2.0.20",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "superjson": "1.9.1",
