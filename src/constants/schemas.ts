@@ -1,5 +1,6 @@
 import z from 'zod'
 
+// saves adding bulky code to room.ts
 export const sendMessageSchema = z.object({
   roomId: z.string(),
   message: z.string(),
