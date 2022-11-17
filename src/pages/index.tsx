@@ -21,7 +21,11 @@ const Home: NextPage = () => {
       </Head>
       <main className="container mx-auto flex min-h-screen flex-col items-center justify-center p-4 gap-5">
         {/* <h1>{hello?.data?.greeting}</h1> */}
-        <button onClick={createRoom} className='py-1 px-5 bg-slate-400 text-white rounded-lg transition-all hover:scale-105'>Create chat room</button>
+        <button onClick={createRoom} className="relative inline-block px-4 py-2 font-medium group">
+          <span className="absolute inset-0 w-full h-full transition duration-200 ease-out transform translate-x-1 translate-y-1 bg-black group-hover:-translate-x-0 group-hover:-translate-y-0"></span>
+          <span className="absolute inset-0 w-full h-full bg-white border-2 border-black group-hover:bg-black"></span>
+          <span className="relative text-black group-hover:text-white">Create chat room here!</span>
+        </button>
       </main>
     </>
   );
