@@ -1,5 +1,6 @@
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
+import CredentialsProvider from "next-auth/providers/credentials";
 
 // Prisma adapter for NextAuth, optional and can be removed
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
@@ -8,24 +9,37 @@ import { env } from "../../../env/server.mjs";
 
 export const authOptions: NextAuthOptions = {
   // Include user.id on session
-  callbacks: {
-    session({ session, user }) {
-      if (session.user) {
-        session.user.id = user.id;
-      }
-      return session;
-    },
-  },
+  // callbacks: {
+  //   session({ session, user }) {
+  //     if (session.user) {
+  //       session.user.id = user.id;
+  //     }
+  //     return session;
+  //   },
+  // },
   // Configure one or more authentication providers
   adapter: PrismaAdapter(prisma),
   providers: [
     // ...add more providers here
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        name: {
+          label: "Name",
+          type: "text",
+          placeholder: "Enter your name",
+        },
+      },
+      async authorize(credentials, _req) {
+        const user: any = { id: 1, name: credentials?.name ?? "J Smith" };
+        return user;
+      },
+    }),
   ],
-  secret: process.env.NEXTAUTH_SECRET,
-  // Adding this so I don't have to debug any db session stuffsss
+  secret: env.NEXTAUTH_SECRET,
   session: {
-    strategy: 'jwt'
-  }
+    strategy: "jwt",
+  },
 };
 
 export default NextAuth(authOptions);
